@@ -1,0 +1,232 @@
+interface IInput
+{
+  in  void edgeDetected();
+  out void triggered();
+
+  behaviour
+  {
+      on edgeDetected:    { triggered; }      
+  }
+}
+
+interface IOutput
+{
+  in void enable();
+  in void disable();
+
+  behaviour
+  {
+    enum State { Disabled, Enabled };
+    State state = State.Disabled;
+    [state.Disabled]
+    {
+    	on enable:	state = State.Enabled;
+    	on disable:	illegal;
+    }
+    [state.Enabled]
+    {
+    	on disable:	state = State.Disabled;
+    	on enable:	illegal;   	
+    }   
+  }
+}
+
+interface IPIRSensor
+{
+  in void enable();
+  in void disable();
+  out void triggered();
+
+  behaviour
+  {
+    enum State { Disabled, Enabled };
+    State state = State.Disabled;
+    [state.Disabled]
+    {
+    	on enable:		state = State.Enabled;
+    	on disable:		illegal;
+    }
+    [state.Enabled]
+    {
+    	on disable:		{state = State.Disabled;}
+    	on enable:		illegal;
+    	on optional:	{ triggered;  }  	
+    }   
+  } 
+}
+
+component PIRSensor
+{
+  provides IPIRSensor 	pirSensor;
+  requires IInput  		inputSignal;
+  requires IOutput 		outputSignal;
+  behaviour
+  {
+    enum State { Disabled, Enabled};
+    State state = State.Disabled;
+    [state.Disabled]
+    {
+    	on pirSensor.enable():		{outputSignal.enable(); state = State.Enabled;}
+    	on pirSensor.disable():		illegal;
+    	on inputSignal.triggered():	illegal; 
+    }
+    [state.Enabled]
+    {
+    	on pirSensor.disable():	{outputSignal.disable(); state = State.Disabled;}
+    	on pirSensor.enable():	illegal;   	
+    	on inputSignal.triggered():	{pirSensor.triggered();}
+    }
+  }	
+}
+
+interface itimer
+{
+  in void create();
+  in void cancel();
+  out void timeout();
+
+  behaviour
+  {
+    enum State {Idle, Pending};
+    State state = State.Idle;
+    [state.Idle] {
+      on create: { state = State.Pending; }
+      on cancel: {}
+    }
+    [state.Pending] {
+      on create: illegal;
+      on cancel: { state = State.Idle; }
+      on inevitable: { timeout; state = State.Idle; }
+    }
+  }
+}
+
+component timer
+{
+  provides itimer port;
+}
+
+interface ICamera
+{
+  in void takePicture();
+  in void abort();
+  out void pictureReady();
+ 
+  behaviour
+  {
+    enum State {Idle, TakingPicture};
+    State state = State.Idle;
+    [state.Idle] 
+    {
+      on takePicture: { state = State.TakingPicture; }
+      on abort: illegal;
+    }
+    [state.TakingPicture] {
+      on optional:  { pictureReady; state = State.Idle; }
+      on takePicture: illegal;
+      on abort:       { state = State.Idle; }
+    } 	
+  }
+}
+
+component Camera
+{
+  provides ICamera camera;
+  requires itimer timer;
+	
+  behaviour
+  {
+    enum State {Idle, Busy};
+    State state = State.Idle;
+    [state.Idle]
+    {
+      on camera.takePicture(): { timer.create(); state = State.Busy;}
+      on timer.timeout(): illegal;
+      on camera.abort: illegal;
+    }
+    [state.Busy]
+    {
+      on timer.timeout(): {camera.pictureReady(); state = State.Idle;}
+      on camera.takePicture(): illegal;
+      on camera.abort(): {timer.cancel(); state = State.Idle;}
+    }    		
+  }
+}
+
+interface IMotionTriggeredCam
+{
+  in void enable();
+  in void disable();
+
+  behaviour 
+  {
+    enum State {Disabled, Enabled, Disabling};
+    State state = State.Disabled;
+    [state.Disabled] {
+      on enable:		{ state = State.Enabled; }
+      on disable:		illegal;
+    }
+    [state.Enabled] {
+      on disable:		{ state = State.Disabled; }
+      on enable:		illegal;               
+    }
+  }
+}
+
+component MotionTriggeredCam
+{
+  provides IMotionTriggeredCam motionTriggeredCam;
+  requires ICamera camera;
+  requires IPIRSensor sensor;  
+	
+  behaviour
+  {
+    enum State {Enabled, Disabled, TakingPicture};
+    State state = State.Disabled;
+   
+    [state.Disabled]
+    {
+      on motionTriggeredCam.enable():	{ sensor.enable(); state = State.Enabled; }
+      on motionTriggeredCam.disable:	illegal;
+      on sensor.triggered():            illegal;     
+      on camera.pictureReady():			illegal;
+    }
+    [state.Enabled]
+    {
+      on motionTriggeredCam.disable():	{ sensor.disable(); state = State.Disabled; }
+      on motionTriggeredCam.enable():	illegal;
+      on camera.pictureReady():			illegal;      
+      on sensor.triggered():			{camera.takePicture(); state = State.TakingPicture; }     
+    }
+    [state.TakingPicture]
+    {
+      on motionTriggeredCam.enable():	illegal;      
+      on motionTriggeredCam.disable():	{ camera.abort(); sensor.disable(); state = State.Disabled; }      
+      on sensor.triggered():            {  }      
+      on camera.pictureReady():         { state = State.Enabled; }     
+    }
+  }  
+}
+
+component MotionTriggeredCameraSystem 
+{
+  provides IMotionTriggeredCam theMotionCam;
+  requires IInput input;  
+  requires IOutput output;  
+
+  system
+  {
+  	MotionTriggeredCam mtc;
+    Camera cam;
+  	PIRSensor sens;
+  	timer tim;
+
+    theMotionCam <=> mtc.motionTriggeredCam;
+    mtc.camera <=> cam.camera;
+    mtc.sensor <=> sens.pirSensor;
+    tim.port <=> cam.timer;
+    sens.inputSignal <=> input; 
+    sens.outputSignal <=> output;    
+  }	
+}
+
