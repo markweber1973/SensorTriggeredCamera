@@ -10,13 +10,13 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#ifndef CAMERA_HH
-#define CAMERA_HH
+#ifndef IRLED_HH
+#define IRLED_HH
 
 #include <iostream>
 
-#include "ICamera.hh"
-#include "itimer.hh"
+#include "IIRLED.hh"
+#include "IOutput.hh"
 
 
 namespace dezyne {
@@ -25,34 +25,33 @@ namespace dezyne {
 }
 
 
-struct Camera
+struct IRLED
 {
   dezyne::meta dzn_meta;
   dezyne::runtime& dzn_rt;
   dezyne::locator const& dzn_locator;
-#ifndef ENUM_Camera_State
-#define ENUM_Camera_State 1
+#ifndef ENUM_IRLED_State
+#define ENUM_IRLED_State 1
   struct State
   {
     enum type
     {
-      Idle, Busy
+      On, Off
     };
   };
-#endif // ENUM_Camera_State
+#endif // ENUM_IRLED_State
   State::type state;
-  std::function<void ()> out_camera;
-  ICamera camera;
-  itimer timer;
+  std::function<void ()> out_irLed;
+  IIRLED irLed;
+  IOutput iOutput;
 
-  Camera(const dezyne::locator&);
+  IRLED(const dezyne::locator&);
   void check_bindings() const;
   void dump_tree(std::ostream& os=std::clog) const;
 
   private:
-  void camera_takePicture();
-  void camera_abort();
-  void timer_timeout();
+  void irLed_SwitchOn();
+  void irLed_SwitchOff();
 };
 
-#endif // CAMERA_HH
+#endif // IRLED_HH

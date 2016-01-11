@@ -9,19 +9,24 @@
 #include <stdio.h>
 #include <string.h>
 #include <sstream>
+
+#include "MotionTriggeredCameraSystem.hh"
+#include "IPIRSensor.hh"
+#include "IIRLED.hh"
+#include "IOutput.hh"
  
 void sigterm(int signum) { std::cout << "sigterm"; }
-const int pin = 11;
 
 typedef void function_t( void ) ;
 
-//std::shared_ptr<SensorMonitor> mySensorMonitor;
+std::shared_ptr<MotionTriggeredCameraSystem> motionTriggeredCameraSystem;
 
 void wPiTriggered(void) 
 { 
   std::cout << "wPiTriggered"; 
-//  mySensorMonitor->sensorRequired.out.triggered();      
+  motionTriggeredCameraSystem->cPIRSensor.inputSignal.out.triggered();
 }
+
 
 const std::string currentDateTime() {
     time_t     now = time(0);
@@ -35,11 +40,21 @@ const std::string currentDateTime() {
 
 void TakePicture()
 {
+  std::cout << "Start TakePicture" << std::endl;  
+  
   std::string raspiString;
   
   std::ostringstream stringStream;
   stringStream << "raspistill -o /home/pi/stills/" << currentDateTime() << ".jpg";
   system(stringStream.str().c_str()); 
+  std::cout << "End TakePicture" << std::endl;    
+}
+
+void wPiWriteOutput(int pin, int value)
+{
+  std::cout << "Start wPiWriteOutput pin: " << pin << " value: " << value << std::endl;    
+  digitalWrite(pin, value);
+  std::cout << "End wPiWriteOutput" << std::endl;    
 }
 
 int main(int argc, char **argv)
@@ -49,7 +64,7 @@ int main(int argc, char **argv)
   dezyne::locator loc;
   dezyne::runtime rt;
   loc.set(rt); 
-//  mySensorMonitor = std::make_shared<SensorMonitor>(loc);
+  motionTriggeredCameraSystem = std::make_shared<MotionTriggeredCameraSystem>(loc);
 
   struct sigaction sigact; 
   memset(&sigact, 0, sizeof(struct sigaction));
@@ -57,28 +72,22 @@ int main(int argc, char **argv)
   sigaction(SIGTERM, &sigact, NULL);
   
   wiringPiSetup();
-  wiringPiISR(pin, INT_EDGE_RISING, wPiTriggered);
+  wiringPiISR(11, INT_EDGE_RISING, wPiTriggered);
+  pinMode(10, 1); 
 
-/*
-  mySensorMonitor->sensorMonitorProvided.out.triggerDetected = []{
-    std::cout << "sensorMonitorProvided.out.triggerDetected" << std::endl;
+  motionTriggeredCameraSystem->cMTC.camera.in.takePicture = []{
     TakePicture();
-  };  
-
-  mySensorMonitor->sensorRequired.in.enable = []{
-    std::cout << "sensor enable" << std::endl;
-  };  
-
-  mySensorMonitor->sensorRequired.in.disable = []{
-    std::cout << "sensor disable" << std::endl;
+    motionTriggeredCameraSystem->cMTC.camera.out.pictureReady();
   };  
   
-  mySensorMonitor->sensorMonitorProvided.in.enable();  
+  motionTriggeredCameraSystem->rIOutput.in.write = [=](int pin, int value){
+    wPiWriteOutput(pin,value);
+  };
 
+  motionTriggeredCameraSystem->cMTC.motionTriggeredCam.in.enable();
   getchar();
-
-  mySensorMonitor->sensorMonitorProvided.in.disable();
-  */
+  motionTriggeredCameraSystem->cMTC.motionTriggeredCam.in.disable();  
+  
   std::cout << "END" << std::endl;    
 	return 0;
 }

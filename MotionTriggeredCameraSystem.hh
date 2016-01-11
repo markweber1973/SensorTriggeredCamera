@@ -16,14 +16,14 @@
 #include <iostream>
 
 #include "MotionTriggeredCam.hh"
-#include "Camera.hh"
+#include "IRLED.hh"
 #include "PIRSensor.hh"
-#include "timer.hh"
 
 
 #include "IMotionTriggeredCam.hh"
 #include "IInput.hh"
 #include "IOutput.hh"
+#include "ICamera.hh"
 
 
 namespace dezyne
@@ -36,14 +36,14 @@ struct MotionTriggeredCameraSystem
 {
   dezyne::meta dzn_meta;
   dezyne::runtime& dzn_rt;
-  MotionTriggeredCam mtc;
-  Camera cam;
-  PIRSensor sens;
-  timer tim;
+  MotionTriggeredCam cMTC;
+  IRLED cIRLED;
+  PIRSensor cPIRSensor;
 
-  IMotionTriggeredCam& theMotionCam;
-  IInput& input;
-  IOutput& output;
+  IMotionTriggeredCam& pIMotionTriggeredCam;
+  ICamera& rICamera;
+  IInput& rIInput;
+  IOutput& rIOutput;
 
   MotionTriggeredCameraSystem(const dezyne::locator&);
   void check_bindings() const;

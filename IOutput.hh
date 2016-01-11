@@ -26,8 +26,7 @@ struct IOutput
 
   struct
   {
-    std::function<void ()> enable;
-    std::function<void ()> disable;
+    std::function<void (int pin, int value)> write;
   } in;
 
   struct
@@ -40,8 +39,7 @@ struct IOutput
 
   void check_bindings() const
   {
-    if (! in.enable) throw dezyne::binding_error(meta, "in.enable");
-    if (! in.disable) throw dezyne::binding_error(meta, "in.disable");
+    if (! in.write) throw dezyne::binding_error(meta, "in.write");
 
 
   }

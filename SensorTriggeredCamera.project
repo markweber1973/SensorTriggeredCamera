@@ -14,24 +14,22 @@
       <File Name="context.hh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="generated">
-      <File Name="timer.hh"/>
       <File Name="PIRSensor.hh"/>
       <File Name="PIRSensor.cc"/>
       <File Name="MotionTriggeredCam.hh"/>
       <File Name="MotionTriggeredCam.cc"/>
-      <File Name="itimer.hh"/>
       <File Name="IPIRSensor.hh"/>
-      <File Name="IOutput.hh"/>
       <File Name="IMotionTriggeredCam.hh"/>
       <File Name="IInput.hh"/>
-      <File Name="Camera.hh"/>
-      <File Name="Camera.cc"/>
       <File Name="MotionTriggeredCameraSystem.hh"/>
       <File Name="MotionTriggeredCameraSystem.cc"/>
+      <File Name="IIRLED.hh"/>
+      <File Name="IOutput.hh"/>
+      <File Name="IRLED.cc"/>
+      <File Name="IRLED.hh"/>
+      <File Name="ICamera.hh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="handwritten">
-      <File Name="timer.cc"/>
-      <File Name="itimer_impl.hh"/>
       <File Name="main.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
@@ -48,8 +46,6 @@
     <Configuration Name="Debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall; -std=c++11" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
-        <IncludePath Value="/home/mark/DezyneWorkspace/SensorTriggeredCamera/generated/."/>
-        <IncludePath Value="/home/mark/DezyneWorkspace/SensorTriggeredCamera/runtime/."/>
       </Compiler>
       <Linker Options="-lpthread  -lwiringPi" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>

@@ -17,13 +17,12 @@
 
 
 PIRSensor::PIRSensor(const dezyne::locator& dezyne_locator)
-: dzn_meta{"","PIRSensor",0,{},{[this]{pirSensor.check_bindings();},[this]{inputSignal.check_bindings();},[this]{outputSignal.check_bindings();}}}
+: dzn_meta{"","PIRSensor",0,{},{[this]{pirSensor.check_bindings();},[this]{inputSignal.check_bindings();}}}
 , dzn_rt(dezyne_locator.get<dezyne::runtime>())
 , dzn_locator(dezyne_locator)
 , state(State::Disabled)
 , pirSensor{{{"pirSensor",this,&dzn_meta},{"",0,0}}}
 , inputSignal{{{"",0,0},{"inputSignal",this,&dzn_meta}}}
-, outputSignal{{{"",0,0},{"outputSignal",this,&dzn_meta}}}
 {
   dzn_rt.performs_flush(this) = true;
   pirSensor.in.enable = [&] () { return dezyne::call_in(this, [&]{return pirSensor_enable();}, this->pirSensor.meta, "enable"); };
@@ -36,10 +35,7 @@ void PIRSensor::pirSensor_enable()
 {
   if (this->state == State::Disabled)
   {
-    {
-      this->outputSignal.in.enable();
-      this->state = State::Enabled;
-    }
+    this->state = State::Enabled;
   }
   else if (this->state == State::Enabled)
   {
@@ -55,10 +51,7 @@ void PIRSensor::pirSensor_disable()
   }
   else if (this->state == State::Enabled)
   {
-    {
-      this->outputSignal.in.disable();
-      this->state = State::Disabled;
-    }
+    this->state = State::Disabled;
   }
 }
 

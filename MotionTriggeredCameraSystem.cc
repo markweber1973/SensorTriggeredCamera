@@ -16,27 +16,24 @@
 
 
 MotionTriggeredCameraSystem::MotionTriggeredCameraSystem(const dezyne::locator& dezyne_locator)
-: dzn_meta{"","MotionTriggeredCameraSystem",0,{&mtc.dzn_meta,&cam.dzn_meta,&sens.dzn_meta,&tim.dzn_meta},{}}
+: dzn_meta{"","MotionTriggeredCameraSystem",0,{&cMTC.dzn_meta,&cIRLED.dzn_meta,&cPIRSensor.dzn_meta},{}}
 , dzn_rt(dezyne_locator.get<dezyne::runtime>())
-, mtc(dezyne_locator)
-, cam(dezyne_locator)
-, sens(dezyne_locator)
-, tim(dezyne_locator)
-, theMotionCam(mtc.motionTriggeredCam)
-, input(sens.inputSignal)
-, output(sens.outputSignal)
+, cMTC(dezyne_locator)
+, cIRLED(dezyne_locator)
+, cPIRSensor(dezyne_locator)
+, pIMotionTriggeredCam(cMTC.motionTriggeredCam)
+, rICamera(cMTC.camera)
+, rIInput(cPIRSensor.inputSignal)
+, rIOutput(cIRLED.iOutput)
 {
-  mtc.dzn_meta.parent = &dzn_meta;
-  mtc.dzn_meta.name = "mtc";
-  cam.dzn_meta.parent = &dzn_meta;
-  cam.dzn_meta.name = "cam";
-  sens.dzn_meta.parent = &dzn_meta;
-  sens.dzn_meta.name = "sens";
-  tim.dzn_meta.parent = &dzn_meta;
-  tim.dzn_meta.name = "tim";
-  connect(cam.camera, mtc.camera);
-  connect(sens.pirSensor, mtc.sensor);
-  connect(tim.port, cam.timer);
+  cMTC.dzn_meta.parent = &dzn_meta;
+  cMTC.dzn_meta.name = "cMTC";
+  cIRLED.dzn_meta.parent = &dzn_meta;
+  cIRLED.dzn_meta.name = "cIRLED";
+  cPIRSensor.dzn_meta.parent = &dzn_meta;
+  cPIRSensor.dzn_meta.name = "cPIRSensor";
+  connect(cPIRSensor.pirSensor, cMTC.sensor);
+  connect(cIRLED.irLed, cMTC.led);
 }
 
 void MotionTriggeredCameraSystem::check_bindings() const

@@ -17,13 +17,14 @@
 
 
 MotionTriggeredCam::MotionTriggeredCam(const dezyne::locator& dezyne_locator)
-: dzn_meta{"","MotionTriggeredCam",0,{},{[this]{motionTriggeredCam.check_bindings();},[this]{camera.check_bindings();},[this]{sensor.check_bindings();}}}
+: dzn_meta{"","MotionTriggeredCam",0,{},{[this]{motionTriggeredCam.check_bindings();},[this]{camera.check_bindings();},[this]{sensor.check_bindings();},[this]{led.check_bindings();}}}
 , dzn_rt(dezyne_locator.get<dezyne::runtime>())
 , dzn_locator(dezyne_locator)
 , state(State::Disabled)
 , motionTriggeredCam{{{"motionTriggeredCam",this,&dzn_meta},{"",0,0}}}
 , camera{{{"",0,0},{"camera",this,&dzn_meta}}}
 , sensor{{{"",0,0},{"sensor",this,&dzn_meta}}}
+, led{{{"",0,0},{"led",this,&dzn_meta}}}
 {
   dzn_rt.performs_flush(this) = true;
   motionTriggeredCam.in.enable = [&] () { return dezyne::call_in(this, [&]{return motionTriggeredCam_enable();}, this->motionTriggeredCam.meta, "enable"); };
@@ -46,7 +47,7 @@ void MotionTriggeredCam::motionTriggeredCam_enable()
   {
     dzn_locator.get<dezyne::illegal_handler>().illegal();
   }
-  else if (this->state == State::TakingPicture)
+  else if (this->state == State::Busy)
   {
     dzn_locator.get<dezyne::illegal_handler>().illegal();
   }
@@ -65,11 +66,12 @@ void MotionTriggeredCam::motionTriggeredCam_disable()
       this->state = State::Disabled;
     }
   }
-  else if (this->state == State::TakingPicture)
+  else if (this->state == State::Busy)
   {
     {
-      this->camera.in.abort();
+      this->led.in.SwitchOff();
       this->sensor.in.disable();
+      this->camera.in.abort();
       this->state = State::Disabled;
     }
   }
@@ -85,9 +87,12 @@ void MotionTriggeredCam::camera_pictureReady()
   {
     dzn_locator.get<dezyne::illegal_handler>().illegal();
   }
-  else if (this->state == State::TakingPicture)
+  else if (this->state == State::Busy)
   {
-    this->state = State::Enabled;
+    {
+      this->led.in.SwitchOff();
+      this->state = State::Enabled;
+    }
   }
 }
 
@@ -100,14 +105,14 @@ void MotionTriggeredCam::sensor_triggered()
   else if (this->state == State::Enabled)
   {
     {
+      this->led.in.SwitchOn();
       this->camera.in.takePicture();
-      this->state = State::TakingPicture;
+      this->state = State::Busy;
     }
   }
-  else if (this->state == State::TakingPicture)
+  else if (this->state == State::Busy)
   {
-    {
-    }
+    this->state = State::Busy;
   }
 }
 

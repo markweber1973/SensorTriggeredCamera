@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Mark
-Date                   :=06/01/16
+Date                   :=09/01/16
 CodeLitePath           :="/home/mark/.codelite"
 LinkerName             :=/usr/bin/g++
 SharedObjectLinkerName :=/usr/bin/g++ -shared -fPIC
@@ -36,7 +36,7 @@ ObjectsFileList        :="SensorTriggeredCamera.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=mkdir -p
 LinkOptions            :=  -lpthread  -lwiringPi
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)/home/mark/DezyneWorkspace/SensorTriggeredCamera/generated/. $(IncludeSwitch)/home/mark/DezyneWorkspace/SensorTriggeredCamera/runtime/. 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). 
 IncludePCH             := 
 RcIncludePath          := 
 Libs                   := 
@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/pump.cc$(ObjectSuffix) $(IntermediateDirectory)/runtime.cc$(ObjectSuffix) $(IntermediateDirectory)/PIRSensor.cc$(ObjectSuffix) $(IntermediateDirectory)/MotionTriggeredCam.cc$(ObjectSuffix) $(IntermediateDirectory)/Camera.cc$(ObjectSuffix) $(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(ObjectSuffix) $(IntermediateDirectory)/timer.cc$(ObjectSuffix) $(IntermediateDirectory)/main.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/pump.cc$(ObjectSuffix) $(IntermediateDirectory)/runtime.cc$(ObjectSuffix) $(IntermediateDirectory)/PIRSensor.cc$(ObjectSuffix) $(IntermediateDirectory)/MotionTriggeredCam.cc$(ObjectSuffix) $(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(ObjectSuffix) $(IntermediateDirectory)/IRLED.cc$(ObjectSuffix) $(IntermediateDirectory)/main.cpp$(ObjectSuffix) 
 
 
 
@@ -123,14 +123,6 @@ $(IntermediateDirectory)/MotionTriggeredCam.cc$(DependSuffix): MotionTriggeredCa
 $(IntermediateDirectory)/MotionTriggeredCam.cc$(PreprocessSuffix): MotionTriggeredCam.cc
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/MotionTriggeredCam.cc$(PreprocessSuffix) "MotionTriggeredCam.cc"
 
-$(IntermediateDirectory)/Camera.cc$(ObjectSuffix): Camera.cc $(IntermediateDirectory)/Camera.cc$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/mark/DezyneWorkspace/SensorTriggeredCamera/Camera.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Camera.cc$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/Camera.cc$(DependSuffix): Camera.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Camera.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Camera.cc$(DependSuffix) -MM "Camera.cc"
-
-$(IntermediateDirectory)/Camera.cc$(PreprocessSuffix): Camera.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Camera.cc$(PreprocessSuffix) "Camera.cc"
-
 $(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(ObjectSuffix): MotionTriggeredCameraSystem.cc $(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/mark/DezyneWorkspace/SensorTriggeredCamera/MotionTriggeredCameraSystem.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(DependSuffix): MotionTriggeredCameraSystem.cc
@@ -139,13 +131,13 @@ $(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(DependSuffix): MotionTr
 $(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(PreprocessSuffix): MotionTriggeredCameraSystem.cc
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/MotionTriggeredCameraSystem.cc$(PreprocessSuffix) "MotionTriggeredCameraSystem.cc"
 
-$(IntermediateDirectory)/timer.cc$(ObjectSuffix): timer.cc $(IntermediateDirectory)/timer.cc$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/mark/DezyneWorkspace/SensorTriggeredCamera/timer.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/timer.cc$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/timer.cc$(DependSuffix): timer.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/timer.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/timer.cc$(DependSuffix) -MM "timer.cc"
+$(IntermediateDirectory)/IRLED.cc$(ObjectSuffix): IRLED.cc $(IntermediateDirectory)/IRLED.cc$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/mark/DezyneWorkspace/SensorTriggeredCamera/IRLED.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/IRLED.cc$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/IRLED.cc$(DependSuffix): IRLED.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/IRLED.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/IRLED.cc$(DependSuffix) -MM "IRLED.cc"
 
-$(IntermediateDirectory)/timer.cc$(PreprocessSuffix): timer.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/timer.cc$(PreprocessSuffix) "timer.cc"
+$(IntermediateDirectory)/IRLED.cc$(PreprocessSuffix): IRLED.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/IRLED.cc$(PreprocessSuffix) "IRLED.cc"
 
 $(IntermediateDirectory)/main.cpp$(ObjectSuffix): main.cpp $(IntermediateDirectory)/main.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/mark/DezyneWorkspace/SensorTriggeredCamera/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IncludePath)

@@ -1,1 +1,1 @@
-./Debug/pump.cc.o ./Debug/runtime.cc.o ./Debug/PIRSensor.cc.o ./Debug/MotionTriggeredCam.cc.o ./Debug/Camera.cc.o ./Debug/MotionTriggeredCameraSystem.cc.o ./Debug/timer.cc.o ./Debug/main.cpp.o
+./Debug/pump.cc.o ./Debug/runtime.cc.o ./Debug/PIRSensor.cc.o ./Debug/MotionTriggeredCam.cc.o ./Debug/MotionTriggeredCameraSystem.cc.o ./Debug/IRLED.cc.o ./Debug/main.cpp.o

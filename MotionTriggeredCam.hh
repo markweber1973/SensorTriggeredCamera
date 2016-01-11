@@ -18,6 +18,7 @@
 #include "IMotionTriggeredCam.hh"
 #include "ICamera.hh"
 #include "IPIRSensor.hh"
+#include "IIRLED.hh"
 
 
 namespace dezyne {
@@ -37,7 +38,7 @@ struct MotionTriggeredCam
   {
     enum type
     {
-      Enabled, Disabled, TakingPicture
+      Enabled, Disabled, Busy
     };
   };
 #endif // ENUM_MotionTriggeredCam_State
@@ -46,6 +47,7 @@ struct MotionTriggeredCam
   IMotionTriggeredCam motionTriggeredCam;
   ICamera camera;
   IPIRSensor sensor;
+  IIRLED led;
 
   MotionTriggeredCam(const dezyne::locator&);
   void check_bindings() const;
